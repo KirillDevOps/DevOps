@@ -1,0 +1,30 @@
+{{ range .Values.sc }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .scName }}
+provisioner: {{ .provisioner }}
+reclaimPolicy: {{ .reclaimPolicy }}
+allowVolumeExpansion: true
+{{ if eq .provisioner "kubernetes.io/no-provisioner" }}
+{{ else if eq .provisioner "kubernetes.io/rbd" -}}
+parameters:
+  monitors: {{ .parametersCeph.monitors }}
+  adminId: {{ .parametersCeph.adminId }}
+  adminSecretName: {{ .parametersCeph.adminSecretName }}
+  adminSecretNamespace: {{ .parametersCeph.adminSecretNamespace }}
+  pool: {{ .parametersCeph.pool }}
+  userId: {{ .parametersCeph.userId }}
+  userSecretName: {{ .parametersCeph.userSecretName }}
+  userSecretNamespace: {{ .parametersCeph.userSecretNamespace }}
+  fsType: ext4
+  imageFormat: "2"
+  imageFeatures: "layering"
+{{ else if eq .provisioner "kubernetes.io/aws-ebs" -}}
+parameters:
+  type: {{ .parametersAws.type }}
+  iopsPerGB: "{{ .parametersAws.iopsPerGB }}"
+  fsType: {{ .fsType }}
+{{ end }}
+{{ end }}
