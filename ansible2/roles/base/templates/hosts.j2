@@ -1,7 +1,0 @@
-{% for hostip in hosts_list %}
-{% if hostip.env is defined and hostip.env == "prod" %}
-{{ hostip.ip }} prod_for_all
-{% elif hostip.env is defined and hostip.env == "test" %}
-{{ hostip.ip }} {{ hostip.hostname }}
-{% endif %}
-{% endfor %}
