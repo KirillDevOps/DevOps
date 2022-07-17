@@ -1,0 +1,33 @@
+---
+- name: Loops
+  hosts: all
+  become: yes
+  
+  tasks:
+  - name: Test
+    debug: msg="test {{ item }}"
+    loop:
+        - "One"
+        - "Two"
+        - "Three"
+        
+  - name: Loop until
+    shell: echo -n Z >> myfile.txt && cat myfile.txt
+    register: output
+    delay: 2
+    retries: 10
+    until: output.stdout.find("ZZZZ") == false
+
+  - name: print output final
+    debug:
+      var: output.stdout
+      
+  - name: Install many packages
+    apt: name={{ item }} state=latest
+    with_items:
+        - mc
+        - net-tools
+        - pcscd
+        
+
+        

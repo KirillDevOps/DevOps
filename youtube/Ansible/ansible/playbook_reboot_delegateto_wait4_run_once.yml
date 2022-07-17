@@ -1,0 +1,20 @@
+---
+- name: Reboot Playbook
+  hosts: astra16
+  become: yes
+  
+  tasks:
+  - name: Reboot task
+    shell: sleep 4 && reboot now
+    async: 1
+    poll: 0
+    run_once: true
+
+    
+  - name: Wait till server will come up again
+    wait_for:
+      host: astra16
+      state: started
+      delay: 5
+      timeout: 40
+    delegate_to: localhost

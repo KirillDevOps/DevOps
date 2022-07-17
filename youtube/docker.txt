@@ -1,0 +1,44 @@
+Установка:
+sudo apt install apt-transport-https
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install docker-ce - основное
+sudo apt install docker.io - бывает нужно до-установить, если не установилось само
+sudo usermod -a -G docker $USER - добавить пользователя в группу docker
+sudo chmod 777 /var/run/docker.sock - дать полные права
+sudo service docker status - проверить, установился ли
+docker run hello-world - проверка
+
+
+
+dockerfile:
+FROM - имя образа
+RUN - запустить команду
+EXPOSE - открыть порт
+
+создать докер image с названием my-docker-image с тэгом v1 из dockerfile (!!! точка в конце):
+docker build -t my-docker-image:v1 .
+
+docker run -it -p 1234:8080 tomcat - запуск контейнера (с названием tomcat) интерактивно (it) с пробросом порта (forwarding 8080 -> 1234)
+docker run -d -p 1234:8080 tomcat - запуск контейнера (с названием tomcat) как демон (сервис) (d - daemon) с пробросом порта (forwarding 8080 -> 1234)
+
+
+docker images - посмотреть образы в системе
+docker search tomcat - найти образ tomcat  на dockerhub
+docker pull tomcat - скачать образ tomcat с dockerhub (не обязательно, можно сразу запускать контейнер из образа, если образ доступен по сети)
+docker ps - показать запущенные контейнеры
+docker ps -a - показать все контейнеры которые запускались когда-либо
+
+docker stop $(docker ps -a -q) - остановить работе всех запущенных контейнеров
+
+docker container rm XXXXXXXXXXXX - удалить контейнер
+docker image rm XXXXXXXXXXXX - удалить образ
+docker container\image rm -f XXXXXXXXXXXX - удалить контейнер\образ принудительно (force)
+
+docker exec -it XXXXXXXXXXXX /bin/bash - запустить консоль в контейнере с именем XXXXXXXXXXXX
+
+docker commit XXXXXXXXXXXX newimage:latest - создать образ newimage:latest из контейнера XXXXXXXXXXXX
+
+Linux на Windows подсистема:
+wsl --install -d Ubuntu

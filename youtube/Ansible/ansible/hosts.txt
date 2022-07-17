@@ -1,0 +1,11 @@
+[staging_servers]
+jenkins ansible_host=10.0.5.13 
+[webservers]
+astra16 ansible_host=10.0.5.18 ansible_user=aladdin owner='Ingeneer'
+
+[localhost]
+localhost ansible_host=10.0.5.22 ansible_user=user ansible_sudo_pass=P@ssw0rd ansible_password=P@ssw0rd
+
+[servers:children]
+webservers
+staging_servers

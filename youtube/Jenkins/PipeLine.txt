@@ -1,0 +1,63 @@
+pipeline {
+    agent {
+	dockerfile true
+    {
+    triggers {
+        pollSCM 'H/2 * * * *'
+    }
+    environment {
+        PROJECT_NAME="MyFirstPipelineJobProject"
+        OWNER_NAME="Kirill Baranov"
+    }
+    stages {
+        stage ('1 Git checkout') {
+            steps {
+                script{
+                    checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[credentialsId: 'GitHubSSH', url: 'git@github.com:KirillDevOps/git_practice.git']]])
+                }
+            }
+        }
+        stage('2 Build') {
+            steps {
+                echo "--------------------------Build Started!------------------------"
+                sh '''
+                ls -la
+                pwd
+                echo "Builded by Jenkins, build # $BUILD_ID" >> html/index.html
+                echo "Project name is '$PROJECT_NAME'" >> html/index.html
+                echo "By $OWNER_NAME" >> html/index.html
+                cat index.html
+                '''
+                echo "--------------------------Build Finished!------------------------"
+            }
+        }
+        stage ('3 Test') {
+            steps {
+                echo "--------------------------Test Started!------------------------"
+                sh '''
+                if grep "$BUILD_ID" html/index.html; then
+                echo "TEST OK"
+                else
+                echo "TEST FAILED"
+                fi
+                '''
+                echo "--------------------------Test Finished!------------------------"
+            }
+        }
+    }
+}
+node {
+    def remote = [:]
+    remote.name = 'astra16'
+    remote.host = '10.0.5.18'
+    remote.user = 'aladdin'
+    remote.password = 'P@ssw0rd'
+    remote.allowAnyHosts = true
+    
+    stage('4 Deploy') {
+        echo "--------------------------Deploy Started!-----------------------"
+        sshRemove remote: remote, path: "/var/www/html/"
+        sshPut remote: remote, from: './html', into: '/var/www/'
+        echo "--------------------------Deploy Finished!-----------------------"
+    }
+}

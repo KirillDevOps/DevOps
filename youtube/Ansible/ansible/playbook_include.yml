@@ -1,0 +1,17 @@
+---
+- name: Include playbook
+  hosts: all
+  become: yes
+
+  
+  vars:
+    mytest: "Privet"
+  
+  tasks:
+  - name: Ping test
+    ping:
+  
+  - name: Include Example
+    include: playbook_openport.yml
+    
+  

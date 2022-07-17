@@ -1,0 +1,29 @@
+---
+- name: Ansible Error Handler
+  hosts: all
+#  any_errors_fatal: true
+  become: yes
+  
+  
+  tasks:
+  - name: Task1
+    apt:
+      name: treeee
+      state: latest
+#    ignore_errors: yes
+    
+  - name: Task 2
+    shell: echo Task 2!
+    register: results
+#    failed_when: results.rc == 0
+#    failed_when: "'Task 2' in results.stdout"
+    
+    
+  - debug:
+      var: results
+        
+  - name: Task3
+    shell: echo Hi Task3
+    
+
+    

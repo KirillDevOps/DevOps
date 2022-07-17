@@ -1,0 +1,133 @@
+Установка:
+==================================================
+sudo apt-get-repository ppa:ansible/ansible
+sudo apt update
+sudo apt-get install python3-pip
+sudo apt-get install ansible
+или:
+sudo pip install ansible
+
+
+Подключение к клиентам Linux:
+==================================================
+Добавление ssh-ключей доступа от сервера к клиенту (зная username ip и passwd) - пример:
+ssh-copy-id user@10.0.5.13
+ssh-copy-id aladdin@10.0.5.18
+
+Конфиг базовый (ansible.cfg):
+[defaults]
+host_key_checking = false
+inventory = ./hosts.txt
+
+ping пример:
+ansible -i hosts.txt all -m ping
+с конфиг файлом:
+ansible all -m ping
+ansible ungroupped -m ping
+
+
+Подключение к клиентам Windows: ИЛИ подключаться по WSL (Linux - ssh)
+================================================
+На сервере:
+sudo pip install "pywinrm>=v0.2.2"
+выполнить powershell скрипт на клиенте (скачать с сайта)
+
+Inventory файл пример:
+================================================
+inventory file пример (hosts.txt):
+[servers]
+jenkins ansible_host=10.0.5.13 ansible_user=user
+astra16 ansible_host=10.0.5.18 ansible_user=aladdin ansible_password=P@ssw0rd
+
+[windows_servers_web]
+server1 ansible_host=10.0.0.1
+
+[windows_servers_db]
+server1 ansible_host=10.0.0.2
+
+[windows_servers_app]
+server1 ansible_host=10.0.0.3
+
+[windows_servers_all:children]
+windows_servers_web
+windows_servers_db
+windows_servers_app
+
+[windows_servers_all:vars]
+ansible_user = user
+ansible_password = P@ssw0rd
+ansible_poirt = 5986
+ansible_connection = winrm
+ansible_winrm_server_cert_validation = ignore
+
+ansible-inventory --list # посмотреть в формате YML inventory файл
+
+популярные ad-hoc команды:
+==============================================
+ansible-doc -l # показать все модули, которые есть в  ansible
+
+ansible all -m setup # вывод подробной информации о серверах
+ansible all -m shell -a "pwd" # запуск shell (/bin/bash/ и запуск команды "pwd")
+ansible all -m copy -a "src=./hosts.txt dest=/home/user mode=777" # скопировать файл с сервера ansible (src) на удаленную машину (dest) с правами 777
+!!! Если не хватает прав - добавить атрибут "-b", например:
+ansible all -m copy -a "src=./hosts.txt dest=/home/user mode=777" -b
+-b, --become: # повысить привелегии
+-k, --ask-pass # запросить пароль для подключения
+-K, --ask-become-pass # запросить пароль для повышения привилегий
+ansible_sudo_pass=yourPassword # в конфиге для playbook
+-v # подробная информация
+-vvv # больше подробной информации
+-vvvvv # ещё больше подробной информации
+ansible all -m file -a "path=/home/hosts.txt state=absent" -b -K # удалить файл /home/hosts.txt
+ansible all -m get_url -a "url=http://website.com/ dest=/home" # скачать файл  из интернета по ссылке (url) в папку (dest)
+ansible all -m apt -a "name=httpd state=latest" -b -K # установить пакет httpd (apache2) с повышением привелегий и запросом пароля
+ansible all -m apt -a "name=httpd state=removed" -b -K # удалить пакет httpd с повышением привелегий и запросом пароля
+ansible all -m service -a "name=httpd state=started enabled=yes" -b -K # запустить сервис apache и добавить его в автозагрузку
+ansible all -m uri -a "url=http://localhost return_content=yes" # посмотреть содержимое сайта http://localhost на удаленном хосте
+template - копирует .j2 с переменными  на борту (обрабатывает эти переменные)  и переименовывает в нужный формат
+
+=================================================
+- debug:
+  var: peremennaya # вывести определенные данные переменные
+- set_fact: z={{x}}+{{y}} # задать новую переменную
+- shell: uptime #удаленная команда, выводящая время работы
+  register: result # команда, записывающая результат выполнения команды shell в переменную result
+
+- block: # описывает блок действий, обобщенных
+- when: # выполнять действия только при определенных условиях (например если определенная переменная равна определенному значению)
+
+
+Роли:
+==================================================
+ ansible-galaxy init deploy_apache_web # создать роль "deploy_apache_web" в директории.
+
+extra-vars (Доп. переменные, задающиеся командой из ком. строки):
+==================================================
+Переменная в плейбуке задается так: "{{ VAR }}"
+ansible-playbook playbook.yml --extra-var "VAR=VALUE"
+или пример:
+-e "MYHOSTS=STAGING"
+или --extra-vars "MYHOSTS=STAGING owner=Kirill"
+
+
+Хранение паролей (секретов) и шифрование файлов:
+=================================================
+ansible-vault create mysecret.txt # создать и зашифровать файл
+ansible-vault view mysecret.txt # посмотреть содержимое
+ansible-vault edit mysecret.txt # редактировать содержимое
+ansible-vault rekey mysecret.txt # сменить пароль
+
+ansible-vault encrypt playbook.yml # зашифровать плейбук (файл)
+ansible-vault decrypt playbook.yml # расшифровать плейбук (файл)
+
+Запуск зашифрованных плейбуков:
+================================================
+ansible-playbook playbook.yml --ask-vault-pass
+Ввести пароль
+
+или
+ansible-playbook playbook.yml --vault-password-file pass.txt
+
+Шифровать переменную:
+================================================
+ansible-vault encrypt_string --stdin-name "Mypass"

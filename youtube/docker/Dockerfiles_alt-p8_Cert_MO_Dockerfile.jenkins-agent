@@ -1,0 +1,36 @@
+FROM vmrm.aladdin.ru:4000/os/linux/x86_64/alt:p8
+
+ENV JENKINS_JAVA_HOME /usr/lib/jvm/jre-1.8.0
+
+CMD [ "/bin/bash" ]
+
+ADD [ "http://gitlab.aladdin.ru/docker/docker-extra-scripts/raw/master/jenkins.sh", "/var/lib/jenkins/jenkins.sh"]
+
+RUN rm -f /etc/apt/sources.list.d/* && \
+    echo '# vmrm.aladdin.ru (Aladdin, Moscow)' > /etc/apt/sources.list.d/aladdin.list && \
+    echo '' >> /etc/apt/sources.list.d/aladdin.list && \
+    echo 'rpm [p8] http://vmrm.aladdin.ru/repository/alt-p8/ p8/branch/x86_64 classic' >> /etc/apt/sources.list.d/aladdin.list && \
+    echo 'rpm [p8] http://vmrm.aladdin.ru/repository/alt-p8/ p8/branch/x86_64-i586 classic' >> /etc/apt/sources.list.d/aladdin.list && \
+    echo 'rpm [p8] http://vmrm.aladdin.ru/repository/alt-p8/ p8/branch/noarch classic' >> /etc/apt/sources.list.d/aladdin.list && \
+    echo '' >> /etc/apt/sources.list.d/aladdin.list && \
+    apt-get update && \
+    apt-get install -y curl git java-1.8.0-openjdk-headless && \
+    apt-get install -y which && \
+    apt-get clean && \
+    mkdir /tmp/git-lfs && \
+    curl -fSLo /tmp/git-lfs/git-lfs-linux-amd64-v2.13.1.tar.gz http://vmrm.aladdin.ru/repository/distrib/git-lfs/v2.13.1/git-lfs-linux-amd64-v2.13.1.tar.gz && \
+    tar -C /tmp/git-lfs -xzf /tmp/git-lfs/git-lfs-linux-amd64-v2.13.1.tar.gz && \
+    /tmp/git-lfs/install.sh && \
+    rm -rf /tmp/git-lfs && \
+    git-lfs install --system && \
+    chmod u+s /bin/ping && \
+    \cp /etc/resolv.conf /var/resolv/etc/resolv.conf && \
+    find /var/lib/apt/lists/ -maxdepth 2 -type f -delete && \
+    rm -rf /usr/share/locale && \
+    rm -rf /usr/share/{man,doc,info,gnome/help} && \
+    rm -rf /usr/share/cracklib && \
+    rm -rf /usr/share/i18n && \
+    rm -rf /etc/ld.so.cache && \
+    rm -rf /var/cache/ldconfig/*
+
+ENTRYPOINT [ "/bin/bash", "/var/lib/jenkins/jenkins.sh" ]

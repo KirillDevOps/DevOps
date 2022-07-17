@@ -1,0 +1,3 @@
+macchenger -s eth0 - показать текущий MAC
+macchenger -r eth0 - изменить MAC на рандомный
+macchenger -m XX:XX:XX:XX:XX:XX eth0 - изменить MAC на какой то определенный

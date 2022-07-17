@@ -1,0 +1,101 @@
+Конфиг:
+user@ansible:~$ git config --global user.name "Kirill Baranov"
+user@ansible:~$ git config --global user.email "K.Baranov@aladdin.ru"
+
+git init . - инициализация репозитория
+git add * - добавление файлов в локальный репозиторий для отслеживания изменений
+git commit -m "Comment" - сохранение (фиксация) текущего состояния в новое закрепление
+
+git commit -am "Comment" - сохранение (фиксация) текущего состояния в текущее закрепление
+или git commit --amend - откроет файл commit-а.
+
+git push - синхронизация локального репозитория с GitHub
+
+git log -1 -p - посмотреть изменения в последнем commit
+git diff --staged - показывает разницу между последним commit и ткем что сейчас на стадии staged (после add)
+
+
+Откат:
+git checkout --FileName.txt - откат до add
+git checkout commitname
+
+Ветвление:
+git branch - инфа о ветвлениях
+git branch BranchName - создать ответвление
+git checkout BranchName - перейти в ветвление
+
+git checkout -b BranchName2 - создть ветвление и сразу перейти в него
+
+Удалить ветку:
+git branch -d BranchName - удалить ветку локально
+git push origin --delete BranchName
+
+Чтобы соединить ветвление BranchName с master (golden branch):
+1. git commit -m "" - Сделать commit в BranchName
+2. git checkout master -  перейти в master-branch
+3. git merge BranchName - объединить BranchName с master.
+
+Удаление commit-ов всех кроме одного (Head~3):
+git reset --soft HEAD~3
+3 - сколько commit стереть из истории, относительно текущего, оставив текущую версию файла.
+
+Игнорирование файлов в репозитории (директории) git:
+Создать в репозитории файл .gitignore
+Записать в него имена файлов и директорий, которые нужно игнорировать.
+Лучше добавить  строку:
+__pycache__/
+
+GitHub:
+git clone https://github.com/KirillDevOps/git_practice.git - скачать репозиторий из GitHub в локальный репозиторий
+git push origin - отправить локальный репозиторий обратно в GitHub
+git push --set-upstream origin BranchName - отправить локальный репозиторий в GitHub с добавлением ветки BranchName
+
+git remote -v - посмотреть, с каким удаленным репозиторием соединен локальный (выполнять находясь в локальном репозитории)
+git remote set-url origin git@github.com:KirillDevOps/git_practice.git - изменить удаленный репозиторий
+
+SSH key:
+ssh-keygen - команда, на windows - в Git-bash, скопировать всё содержимое файла ssh_key.pub
+
+
+Работа с проектом:
+================================================
+git clone --recurse-submodules (копировать ссылку из репозитория)
+git checkout -b BranchName - создать ветку и перейти в неё
+git commit -am "rm#12345 Выполнены такие-то изменения"
+git push origin BranchName
+
+
+Слияние веток и удаление старой ветки:
+=====================================================
+git checkout master - перейти в главную ветку, с которой будет слияние
+git merge BranchName - слияние веток (той где сейчас с той которую введешь)
+===============================================
+git branch -d BranchName - удалитиь ветку
+
+
+git pull --rebase - только так!
+
+Мердж со склеиванием коммитов:
+==================================================
+git checkout master
+git merge --squash branch_name
+git commit -am "Merged branch_name"
+git push origin master
+
+Добавление submodule
+===================================================
+git submodule add git@gitlab.aladdin.ru:vendors/libxkbcommon.git - добавить папку с субмодулем в имеющийся проект как субмодуль
+
+Подтянуть файлы субмодуля:
+===================================================
+перейти в папку с подмодулем, выполнить:
+git submodule init
+git submodule update
+
+При проблемах с субмодулем: (синхронизировать)
+git submodule update --force --recursive --init --remote
+
+
+Удалить последние коммиты
+git reset --hard <последний перед удаляемыми коммит>
+git push -f

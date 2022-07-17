@@ -1,0 +1,6 @@
+---
+- name: Открыть порт
+  community.general.ufw:
+    port  : '80'
+    rule  : allow
+    proto : tcp

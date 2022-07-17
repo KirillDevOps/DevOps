@@ -1,0 +1,92 @@
+sudo apt update
+sudo apt install openjdk-8-jdk
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com FCEF32E745F2C3D5
+sudo apt update
+sudo apt install jenkins
+sudo systemctl status jenkins
+
+
+
+
+# sudo apt-get --allow-insecure-repositories update
+# sudo apt-get install --reinstall gpgv libgcrypt20
+
+
+Обновление:
+Скопировать ссылку обновления из UI
+Посмотреть в информации о системе исполняемый файл.
+/usr/share/jenkins/jenkins.war
+сделать бэкап файла (переименовать):
+sudo  mv jenkins.war jenkins_old.war
+скачать новый через sudo wget
+проверить, скачался ли jenkins.war
+сделать рестарт сервиса
+Откат - так же в обратную сторону.
+
+
+CLI:
+http://10.0.5.13:8080/jnlpJars/jenkins-cli.jar
+java -jar jenkins-cli.jar -auth login:password -s http://localhost:8080 who-am-i
+
+Переменные среды с паролем и логином linux:
+export JENKINS_USER_ID=
+export JENKINS_API_TOKEN=
+windows powershell:
+$env:JENKINS_USER_ID=""
+$env:JENKINS_API_TOKEN=""
+
+Экспорт\импорт job windows powershell:
+java -jar jenkins-cli.jar -auth login:password -s http://localhost:8080 get-job JobName1 > Job1.xml
+get-content Job1.xml | java -jar jenkins-cli.jar -auth login:password -s http://localhost:8080 create-job JobNameX
+linux:
+java -jar jenkins-cli.jar -auth login:password -s http://localhost:8080 get-job JobName1 > Job1.xml
+java -jar jenkins-cli.jar -auth login:password -s http://localhost:8080 create-job JobName1 < Job1.xml
+
+
+
+
+Триггеры для запуска job:
+1. Trigger builds remotely (e.g., from scripts):
+Придумываем токен (например 123asd456QWE789zxc), собираем правильный URL (10.0.5.13:8080 - url сервера jenkins, BuildTrigger - название job,
+admin - имя пользователя, 116accdbbb70b4325bd715f107f3294963 - токен\пароль)
+curl http://admin:116accdbbb70b4325bd715f107f3294963@10.0.5.13:8080/job/BuildTrigger/build?token=123asd456QWE789zxc
+
+
+GitHub webhook:
+http://JENKINS.SERVER.IP.ADDRESS:8080/github-webhook/
+json
+
+docker - добавить jenkins в группу docker:
+sudo usermod -a -G docker jenkins
+
+
+
+Groovy Script:
+Jenkins.instance.metaClass.methods*.name - вывести все функции
+Jenkins.instance.имяфункции - запустить функцию
+
+Обнуление failure job-ов:
+
+SUCCESS,FAILURE 
+job = Jenkins.instance.getItemByFullName("UnifiedClient3/3.0.0-notarize")
+job.getBuilds().each {
+	if(it.result == Result.FAILURE) {
+		it.delete()
+	}
+}
+
+Полностью всех, и SUCCESS и FAILURE:
+
+job = Jenkins.instance.getItemByFullName("JobName")
+job.getBuilds().each { build ->
+	build.delete()
+}
+job.updateNextBuildNumber(1)
+
+
+Docker:
+sudo apt install docker
+sudo apt install docker.io
+sudo usermod -a -G docker jenkins
+sudo chmod 777 /var/run/docker.sock

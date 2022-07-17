@@ -1,0 +1,75 @@
+---
+- name: Upload Web Page, Install and start web server
+  hosts: all
+  become: yes
+
+  vars:
+    source_folder: MyWebSite/html
+    destin_folder: /var/www/
+
+  tasks:
+  - name: Check LINUX Version
+    debug: var=ansible_os_family
+    
+  - block: # Debian
+      - name: Install server Debian
+        apt: name=apache2 state=latest  
+
+      - name: Start Web Server Debian
+        service: name=apache2 state=started enabled=yes
+    when: ansible_os_family == "Debian"
+    
+  - block: # Astra Linux 1.6 (Smolensk)
+      - name: Install server Astra 1.6
+        apt: name=apache2 state=latest      
+
+      - name: Start Web Server Astra 1.6
+        service: name=apache2 state=started enabled=yes
+    when: ansible_os_family == "Astra Linux (Smolensk)"
+
+  - block: # RedHat
+      - name: Install server RedHat
+        apt: name=httpd state=latest      
+
+      - name: Start Web Server RedHat
+        service: name=httpd state=started enabled=yes
+    when: ansible_os_family == "RedHat"
+
+# Копирование всех файлов из папки     
+  - name: Copy page to servers
+    copy: src={{ source_folder }} dest={{ destin_folder }} mode=0555
+
+# Вариант лупа через with_fileglob без рекурсии   
+#    copy: src={{ item }} dest={{ destin_folder }} mode=0555
+#    with_fileglob: "{{ source_folder }}/*"
+# Копирование конкретных файлов, перечисленных в списке
+#    loop:
+#     - "index.html"
+#     - "one_more_file.txt"
+#     - "second_file"
+  
+    notify: 
+     - Restart Apache Debian
+     - Restart Apache RedHat
+     - Restart Apache Astra
+
+  - name: Generate index.html file
+    template: src={{ source_folder }}/index.j2 dest={{ destin_folder }}/html/index.html mode=0555
+    notify: 
+     - Restart Apache Debian
+     - Restart Apache RedHat
+     - Restart Apache Astra 
+     
+  handlers:
+  - name: Restart Apache Debian
+    service: name=apache2 state=restarted
+    when: ansible_os_family == "Debian"
+
+  - name: Restart Apache Astra
+    service: name=apache2 state=restarted
+    when: ansible_os_family == "Astra Linux (Smolensk)"
+
+  - name: Restart Apache RedHat
+    service: name=httpd state=restarted
+    when: ansible_os_family == "RedHat"
+

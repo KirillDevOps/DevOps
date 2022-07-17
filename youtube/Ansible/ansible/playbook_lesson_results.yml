@@ -1,0 +1,35 @@
+---
+- name: My Playbook 4 lesson 11
+  hosts: all
+#  any_errors_fatal: true
+  become: yes
+
+
+  vars: 
+    message1: Hi
+    message2: World!
+    secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+  tasks:
+  - name: Print Secret Var
+    debug: 
+      var: secret
+  - debug:
+      msg: "Secretnoe slovo {{message2}} {{message1}}"
+
+
+  - set_fact: full_message="{{ message1 }} {{ message2}} from {{owner}}"
+  - debug:
+      var: full_message
+
+  - debug:
+      var: ansible_distribution
+
+  - shell: uptime
+    register: results
+
+  - debug:
+      var: results
+
+  - debug:
+      var: results.stdout
