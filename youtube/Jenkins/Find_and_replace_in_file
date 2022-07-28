@@ -1,0 +1,3 @@
+def file = readFile 'file.txt'
+def newText = file.replaceAll ('TEXT_FROM', 'TEXT_TO')
+writeFile(file: 'file.txt', text: newText)
