@@ -17,6 +17,10 @@ terraform init - инициализация (в зависимости от вы
 terraform plan - посмотреть, какие изменения планирует произвести tgerraform
 terraform apply - подтвердить выполнение terraform - скрипта (выполнять после plan)
 terraform destroy - уничтожить инфраструктуру, описаную в коде
+terraform console - консоль, например:
+    file("user_data.sh") - выдаст содержимое файла
+    templatefile("user_data.sh.tpl", {f_name = "FirstName", l_name = "LastName", names = [....]}) - выдаст результат обработки шаблона в терминале.
+
 
 Переменные окружения в системе для логина\пароля\региона aws:
 AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXXXXXXXXX
