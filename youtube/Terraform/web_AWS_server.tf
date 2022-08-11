@@ -15,7 +15,11 @@ echo "<h2>WebServer with IP: $myip</h2>Build by Terraform!" > /var/www/html/inde
 sudo service httpd start
 chkconfig httpd on
 EOF
-
+  tags = {
+    name = "My WebServer"
+    Owner = "Me"
+    Project = "Terraform Lesson 8"
+  }
 }
 
 resource "aws_security_group" "my_webserver-sec_group" {
