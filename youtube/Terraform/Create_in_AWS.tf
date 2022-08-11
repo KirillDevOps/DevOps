@@ -6,5 +6,10 @@ provider "aws" {
 
 resource "aws_instance" "my_ubuntu" {
     ami = "ami-090f10efc254eaf55"
-    instance.type = "t3.micro"
+    instance_type = "t3.micro"
+}
+
+resource "aws_instance" "my_Amazon" {
+    ami = "ami-03a71cec707bfc3d7"
+    instance_type = "t3.micro"
 }
