@@ -1,3 +1,4 @@
+==========Установка===========================
 curl -LO https://go.dev/dl/go1.18beta1.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.18beta1.linux-amd64.tar.gz
 export GOROOT=/usr/local/go
@@ -10,3 +11,14 @@ sudo  go mod tidy
 git clone https://github.com/hashicorp/terraform.git
 cd terraform
 sudo go build
+==================================================
+
+terraform init - инициализация (в зависимости от выбранного провайдера)
+terraform plan - посмотреть, какие изменения планирует произвести tgerraform
+terraform apply - подтвердить выполнение terraform - скрипта (выполнять после plan)
+terraform destroy - уничтожить инфраструктуру, описаную в коде
+
+Переменные окружения в системе для логина\пароля\региона aws:
+AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXXXXXXXXX
+AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXX
+AWS_DEFAULT_REGION=XXXXX
