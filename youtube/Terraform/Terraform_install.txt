@@ -22,6 +22,7 @@ terraform console - консоль, например:
     templatefile("user_data.sh.tpl", {f_name = "FirstName", l_name = "LastName", names = [....]}) - выдаст результат обработки шаблона в терминале.
 
 terraform output - вывести только output (блок в коде terraform)
+terraform show - показать подробную информацию о инфраструктуре (по файлу tf) - печатает всё что в файле в развернутом виде
 
 Переменные окружения в системе для логина\пароля\региона aws:
 AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXXXXXXXXX
