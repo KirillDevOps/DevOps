@@ -1,9 +1,13 @@
 //provider "aws" {
 //  region = "ru-central-1"
 //}
+
+//статический IP:
 resource "aws_eip" "my_static_ip" {
   instance = aws_instance.my_webserver.id
 }
+
+//webserver:
 resource "aws_instance" "my_webserver" {
   ami = "ami-03a71cec707bfc3d7"
   instance_type = "t3.micro"
@@ -41,6 +45,7 @@ resource "aws_instance" "my_webserver" {
   }
 }
 
+//группы безопасности в AWS - настройка
 resource "aws_security_group" "my_webserver-sec_group" {
   name = "Web server security group"
   description = "My security group"
@@ -79,4 +84,9 @@ resource "aws_security_group" "my_webserver-sec_group" {
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+//вывод на экран в результате выполнения apply:
+output "webserver_instance_id" {
+  value = aws_instance.my_webserver.id
 }
