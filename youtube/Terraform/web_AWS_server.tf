@@ -6,6 +6,19 @@
 resource "aws_eip" "my_static_ip" {
   instance = aws_instance.my_webserver.id
 }
+//DataBase:
+resource "aws_instance" "my_DB" {
+  ami = "ami-03a71cec707bfc3d7"
+  instance_type = "t3.micro"
+  vpc_security_group_ids = [aws_security_group.my_webserver-sec_group.id]
+  tags = {
+    name = "My DB"
+    Owner = "Me"
+    Project = "Terraform Lesson 14"
+  }
+  //запускать этот инстанс только после следующего:
+  depends_on = [aws_instance.my_webserver]
+}
 
 //webserver:
 resource "aws_instance" "my_webserver" {
