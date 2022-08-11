@@ -1,0 +1,12 @@
+curl -LO https://go.dev/dl/go1.18beta1.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.18beta1.linux-amd64.tar.gz
+export GOROOT=/usr/local/go
+export GOPATH=/usr/local/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+source ~/.bashrc
+sudo  go mod tidy
+
+
+git clone https://github.com/hashicorp/terraform.git
+cd terraform
+sudo go build
