@@ -6,6 +6,7 @@ resource "aws_instance" "my_webserver" {
   ami = "ami-03a71cec707bfc3d7"
   instance_type = "t3.micro"
   vpc_security_group_ids = [aws_security_group.my_webserver-sec_group.id]
+
 //  user_data = <<EOF
 //#!/bin/bash
 //yum -y update
@@ -15,7 +16,14 @@ resource "aws_instance" "my_webserver" {
 //sudo service httpd start
 //chkconfig httpd on
 //EOF
-  user_data = file("user_data.sh")
+
+//  user_data = file("user_data.sh")
+
+  user_data = templatefile("user_data.sh.tpl", {
+    f_name = "MyName",
+    l_name = "MyLastName",
+    names = ["abcd","efg","adsaaaf"]
+  })
   tags = {
     name = "My WebServer"
     Owner = "Me"
