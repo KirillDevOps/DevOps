@@ -1,0 +1,46 @@
+curl -LO https://go.dev/dl/go1.18beta1.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.18beta1.linux-amd64.tar.gz
+export GOROOT=/usr/local/go
+export GOPATH=/usr/local/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+source ~/.bashrc
+sudo  go mod tidy
+
+
+git clone http://gitlab.aladdin.ru/devops/Terraform.git
+cd terraform
+sudo go build
+sudo ln -s ${HOME}/terraform/terraform /usr/bin/terraform
+
+
+Сборка и установка плагина:
+===============Build =======================
+git clone http://gitlab.aladdin.ru/devops/infrastructure/Terraform/terraform-provider-vsphere.git
+cd terraform-provider-vsphere
+go build
+chmod a+x terraform-provider-vsphere
+
+=========== install plugin =======================
+mkdir -p ~/.terraform.d/plugins/local/hashicorp/vsphere/2.2.0/linux_amd64
+cp -a terraform-provider-vsphere ~/.terraform.d/plugins/local/hashicorp/vsphere/2.2.0/linux_amd64/terraform-provider-vsphere
+
+============================================
+
+После этих действий перейти в папку с проектом файл versions.tf привести к следующему виду:
+
+terraform {
+required_providers {
+vsphere = {
+source = "local/hashicorp/vsphere"
+version = ">= 2.2.0"
+}
+}
+required_version = ">= 0.13"
+}
+
+сохранить и выполнить следующую команду:
+
+terraform init
+
+Вывод должен быть следующим:
+Terraform has been successfully initialized!
